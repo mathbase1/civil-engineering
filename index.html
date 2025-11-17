@@ -1,1 +1,343 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>T Level Civil Engineering: Maths Hub</title>
 
+<!-- =======================================================
+      GLOBAL + BACKGROUND (Animated gradient + waves)
+======================================================= -->
+<style>
+  /* ---------- Reset / base ---------- */
+  *{margin:0;padding:0;box-sizing:border-box}
+  html,body{height:100%}
+  :root{
+    --text:#f2f2f2;
+    --panel:#1e293b;
+  }
+  body{
+    color:var(--text);
+    line-height:1.6;
+    overflow:hidden;               /* we scroll inside #menu */
+    position:relative;
+
+    /* Your animated gradient background */
+    font-family: Inter, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+    background: linear-gradient(315deg,
+                rgba(101,0,94,1) 3%,
+                rgba(60,132,206,1) 38%,
+                rgba(48,238,226,1) 68%,
+                rgba(255,25,25,1) 98%);
+    animation: gradient 15s ease infinite;
+    background-size: 400% 400%;
+    background-attachment: fixed;
+  }
+
+  @keyframes gradient{
+    0%{background-position:0% 0%}
+    50%{background-position:100% 100%}
+    100%{background-position:0% 0%}
+  }
+
+  /* ---------- Waves (sit behind content) ---------- */
+  .waves{position:fixed; inset:0; z-index:0; pointer-events:none;}
+  .wave{
+    background: rgb(255 255 255 / 25%);
+    border-radius: 1000% 1000% 0 0;
+    position: absolute;
+    width: 200%;
+    height: 12em;
+    animation: wave 10s -3s linear infinite;
+    transform: translate3d(0,0,0);
+    opacity: 0.8;
+    bottom: 0;
+    left: -50%;   /* keeps the 200% width centered without horizontal scroll */
+  }
+  .wave:nth-of-type(2){
+    bottom:-1.25em;
+    animation: wave 18s linear reverse infinite;
+    opacity:0.8;
+  }
+  .wave:nth-of-type(3){
+    bottom:-2.5em;
+    animation: wave 20s -1s reverse infinite;
+    opacity:0.9;
+  }
+  @keyframes wave{
+    2%{ transform: translateX(1) }
+    25%{ transform: translateX(-25%) }
+    50%{ transform: translateX(-50%) }
+    75%{ transform: translateX(-25%) }
+    100%{ transform: translateX(1) }
+  }
+
+  /* Reduce motion for accessibility */
+  @media (prefers-reduced-motion: reduce){
+    *{animation:none !important}
+  }
+
+  /* ---------- Menu layout ---------- */
+  #menu{
+    position:fixed; inset:0; z-index:1;
+    display:flex; justify-content:center; align-items:flex-start;
+    padding:2rem 1rem; overflow-y:auto;
+  }
+  .container{width:100%; max-width:900px;}
+  .logo{
+    position:fixed; top:1rem; left:1rem; width:140px; height:auto; z-index:2; border-radius:8px;
+  }
+  h1{
+    text-align:center; margin:0 0 2rem; font-size:2.2rem; font-weight:800;
+    text-shadow:0 2px 12px rgba(0,0,0,.35);
+  }
+
+  /* ---------- Accordions (base) ---------- */
+  details{
+    background:var(--panel);
+    border-radius:12px;
+    margin-bottom:.75rem;
+    overflow:visible; position:relative; transition:.3s;
+  }
+  summary{
+    cursor:pointer; padding:1rem 1.25rem; font-size:1.1rem;
+    display:flex; justify-content:space-between; align-items:center; list-style:none;
+  }
+  summary::-webkit-details-marker{display:none;}
+  details::before{
+    content:''; float:left; width:6px; height:100%; border-radius:6px 0 0 6px;
+  }
+  summary:hover{ background:rgba(255,255,255,.05); }
+  .content{
+    display:flex; justify-content:flex-start; gap:.75rem; flex-wrap:wrap;
+    padding:1rem 1.5rem 1.25rem;
+    border-top:1px solid rgba(255,255,255,.08);
+  }
+
+  /* ---------- Section colours & header text ---------- */
+  details.number::before{background:#00bcd4;}        .number[open]{outline:2px solid #00bcd4;}        .number>summary{color:#00bcd4;}
+  details.algebra::before{background:#ff5722;}       .algebra[open]{outline:2px solid #ff5722;}       .algebra>summary{color:#ff5722;}
+  details.ratio::before{background:#009688;}         .ratio[open]{outline:2px solid #009688;}         .ratio>summary{color:#009688;}
+  details.geometry::before{background:#4caf50;}      .geometry[open]{outline:2px solid #4caf50;}      .geometry>summary{color:#4caf50;}
+  details.averages::before{background:#3f51b5;}      .averages[open]{outline:2px solid #3f51b5;}      .averages>summary{color:#3f51b5;}
+  details.probability::before{background:#e91e63;}   .probability[open]{outline:2px solid #e91e63;}   .probability>summary{color:#e91e63;}
+
+  /* ---------- Highlight nested topics when opened ---------- */
+  .number details[open]>summary     {background:rgba(0,188,212,.18); color:#00bcd4;}
+  .algebra details[open]>summary    {background:rgba(255,87,34,.18); color:#ff5722;}
+  .ratio details[open]>summary      {background:rgba(0,150,136,.18); color:#009688;}
+  .geometry details[open]>summary   {background:rgba(76,175,80,.18); color:#4caf50;}
+  .averages details[open]>summary   {background:rgba(63,81,181,.18); color:#3f51b5;}
+  .probability details[open]>summary{background:rgba(233,30,99,.18); color:#e91e63;}
+
+  /* ---------- Link buttons ---------- */
+  .link-btn{
+    position:relative; display:inline-block;
+    padding:.6rem 1.2rem; border:none; border-radius:8px;
+    background:linear-gradient(135deg,#00bcd4,#7c4dff);
+    color:#000; font-weight:700; font-size:.95rem; text-decoration:none; transition:.2s; z-index:1;
+  }
+  .link-btn:hover{ transform:translateY(-3px); background:linear-gradient(135deg,#7c4dff,#c6ff00); }
+  .link-btn::after{
+    content:attr(data-tip); position:absolute; left:calc(100% + 14px); top:50%; transform:translateY(-50%);
+    background:#fff; color:#000; padding:.75rem 1rem; border-radius:8px; min-width:160px; max-width:520px;
+    line-height:1.35; white-space:normal; overflow-wrap:break-word; text-align:left;
+    box-shadow:0 4px 12px rgba(0,0,0,.25); opacity:0; pointer-events:none; transition:opacity .25s;
+  }
+  .link-btn::before{
+    content:''; position:absolute; left:100%; top:50%; transform:translateY(-50%);
+    border:6px solid transparent; border-left-color:#fff; opacity:0; transition:opacity .25s;
+  }
+  .link-btn:hover::after,.link-btn:hover::before{opacity:1;}
+
+  @media (max-width:550px){
+    .link-btn::after{ left:auto; right:calc(100% + 14px); }
+    .link-btn::before{ left:auto; right:100%; border-left-color:transparent; border-right-color:#fff; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ===== Waves background (replaces the drip/lines) ===== -->
+<div class="waves" aria-hidden="true">
+  <div class="wave"></div>
+  <div class="wave"></div>
+  <div class="wave"></div>
+</div>
+
+<!-- Logo (optional) -->
+<img src="https://lirp.cdn-website.com/b085c470/dms3rep/multi/opt/Bucks%2BCollege%2BGroup-e5af1b68-1920w.jpg"
+     alt="Bucks College Group logo" class="logo"
+     onerror="this.style.display='none'"/>
+
+<div id="menu"><div class="container">
+  <h1>T Level Civil Engineering: Maths Hub</h1>
+
+  <!-- ======================================================
+  =====================  SECTION : NUMBER  ==================
+  ====================================================== -->
+  <details class="number">
+    <summary>Core Number & Units</summary>
+    <div class="content"><strong>Choose a topic ▼</strong></div>
+
+    <!-- Place Value -->
+    <details>
+      <summary>Converting Between Units</summary>
+      <div class="content">
+        <a class="link-btn" href="https://nkritah.github.io/engineering-units/
+" target="_blank" rel="noopener noreferrer"
+           data-tip="Master converting between units commonly used in engineering">
+          Converting between units
+        </a>
+    </details>
+        <details>
+      <summary>Estimation</summary>
+      <div class="content">
+        <a class="link-btn" href="https://nkritah.github.io/engineering-estimation/
+
+" target="_blank" rel="noopener noreferrer"
+           data-tip="Perform calculations based on engineering scenarios">
+          Estimation
+        </a>
+    </details>
+            <details>
+      <summary>Accuracy and bounds</summary>
+      <div class="content">
+        <a class="link-btn" href="https://nkritah.github.io/engineering-bounds/
+
+
+" target="_blank" rel="noopener noreferrer"
+           data-tip="Uderstand how to apply accuracy and bounds in engineering">
+          Accuracy and Bounds
+        </a>
+    </details>
+
+            <details>
+      <summary>Proportion</summary>
+      <div class="content">
+        <a class="link-btn" href="https://nkritah.github.io/engineering-proportion/
+
+" target="_blank" rel="noopener noreferrer"
+           data-tip="Apply proportionality techniques in engineering scenarios">
+          Proportion
+        </a>
+    </details>
+    
+  </details>
+  
+  
+  <!-- /Number -->
+  
+    <!-- ======================================================
+  =====================  SECTION : GEOMETRY  ===============
+  ====================================================== -->
+  <details class="geometry">
+    <summary>Geometry & Measures (Construction)</summary>
+
+    <!-- Transformations -->
+    <details>
+      <summary>2D area</summary>
+      <div class="content">
+        <a class="link-btn" href="https://nkritah.github.io/engineering-area/" 
+        target="_blank" rel="noopener noreferrer"
+           data-tip="Perform area calculations commonly used in civil engineering">
+          2D Area
+        </a>
+      </div>
+    </details>
+        <details>
+      <summary>Volume</summary>
+      <div class="content">
+        <a class="link-btn" href="https://nkritah.github.io/volume/" 
+        target="_blank" rel="noopener noreferrer"
+           data-tip="Perform volume calculations commonly used in civil engineering">
+          Volume
+        </a>
+      </div>
+    </details>
+            <details>
+      <summary>Trapezoidal rule</summary>
+      <div class="content">
+        <a class="link-btn" href="https://nkritah.github.io/trap-rule/
+" 
+        target="_blank" rel="noopener noreferrer"
+           data-tip="Estimate the area underneath curves under certain engineering scenarios, you will also be asked volume questions about pyramids and cones. happy practising!!!  ">
+          Trapezoidal rule
+        </a>
+      </div>
+    </details>
+                <details>
+      <summary>Trigonometry and Pythagoras</summary>
+      <div class="content">
+        <a class="link-btn" href="https://nkritah.github.io/trig/
+" 
+        target="_blank" rel="noopener noreferrer"
+           data-tip="Use trigonometry and Pythagoras to solve problems">
+          Trigonometry and Pythagoras 
+        </a>
+      </div>
+            <div class="content">
+        <a class="link-btn" href="https://nkritah.github.io/oblique/
+" 
+        target="_blank" rel="noopener noreferrer"
+           data-tip="Use your trigonometry knowledge to solve problems with oblique triangles. An oblique triangle is any triangle that does not contain a right angle 90°. These triangles can be further classified as either acute (all angles less than 90° or obtuse one angle greater than 90°.)">
+          Oblique Triangles
+        </a>
+      </div>
+    </details>
+
+  </details>
+  
+  <!-- /Geometry -->
+
+  
+  
+  <!-- ======================================================
+  =====================  SECTION : ALGEBRA  =================
+  ====================================================== -->
+  <details class="algebra">
+    <summary>Algebra & Formulae</summary>
+
+    <!-- Simplifying expressions -->
+    <details>
+      <summary>Simplifying Expressions</summary>
+      <div class="content">
+        <a class="link-btn" href="https://nkritah.github.io/simplifying-level-1/" target="_blank" rel="noopener noreferrer"
+           data-tip="Collect like terms and tidy expressions (L1).">
+          Collecting Like Terms — L1
+        </a>
+      </div>
+    </details>
+
+
+  </details>
+  
+  
+  <!-- /Algebra -->
+
+
+
+
+
+  </details>
+  
+</div>
+</div>
+
+<!-- Keep only one MAIN accordion open -->
+<script>
+document.addEventListener('toggle', (e) => {
+  if (
+    e.target.tagName === 'DETAILS' &&
+    e.target.open &&
+    e.target.parentElement &&
+    e.target.parentElement.classList.contains('container')
+  ){
+    document.querySelectorAll('#menu>.container>details').forEach(d=>{
+      if(d!==e.target) d.removeAttribute('open');
+    });
+  }
+}, true);
+</script>
+</body>
+</html>
